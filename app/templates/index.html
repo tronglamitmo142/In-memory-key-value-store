@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key-Value Store UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Key-Value Store UI</h1>
+
+    <h2>Set Key-Value Pair</h2>
+    <form id="set-form">
+        <label for="set-key">Key:</label>
+        <input type="text" id="set-key" name="set-key">
+        <br>
+        <label for="set-value">Value:</label>
+        <input type="text" id="set-value" name="set-value">
+        <br>
+        <button type="submit">Set</button>
+    </form>
+
+    <h2>Get Value by Key</h2>
+    <form id="get-form">
+        <label for="get-key">Key:</label>
+        <input type="text" id="get-key" name="get-key">
+        <br>
+        <button type="submit">Get</button>
+    </form>
+
+    <h3>Result:</h3>
+    <pre id="result"></pre>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        document.getElementById('set-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const key = document.getElementById('set-key').value;
+            const value = document.getElementById('set-value').value;
+
+            const response = await fetch(`${API_BASE_URL}/set`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ key, value })
+            });
+
+            const data = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        });
+
+        document.getElementById('get-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const key = document.getElementById('get-key').value;
+
+            const response = await fetch(`${API_BASE_URL}/get/${key}`);
+            const data = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
+</body>
+</html>
