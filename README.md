@@ -11,10 +11,10 @@ To-do list:
 - [ ] Write the Service, Ingress for K8s resources 
 - [ ] Optimizing the solution 
 
-## 1. Setup DevOps Environment 
+## Setup DevOps Environment 
 ![](./images/key-value-api.drawio%20(1).png)
 
-## 2. Development requirement features of the application 
+## 1. Development requirement features of the application 
 
 First of all, We have to analyze the task for a clear implementation.
 
@@ -72,7 +72,7 @@ Reason choosing Flask:
 
 The application code is here: [app](./app/app.py)
 
-3. Writing Dockerfile
+## 2. Writing Dockerfile
 The Dockerfile is here: [Dockerfile](./Dockerfile)
 
 Verify: Using [verify-api script](./utils/verify-api.sh)
@@ -89,3 +89,4 @@ $ ./verify-api.sh
 ```
 ![](./images/Screenshot%202023-04-21%20at%2015.39.20.png)
 
+## 3. DevOps Evaluation (Kubernetes)
