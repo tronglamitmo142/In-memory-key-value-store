@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage("Test Webhook"){
             steps {
-                sh "echo Test"
+                sh "echo Test1"
             }
         }
     }
