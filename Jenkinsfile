@@ -39,9 +39,10 @@ pipeline {
                         sh "whoami"
                         sh "sudo usermod -aG docker $USER"
                         sh "newgrp docker"
-                        sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
-                        sh "docker build -t ${appName}:${commitHash} ."
-                        sh "docker push ${appName}:${commitHash}"
+                        sh "docker ps"
+                        // sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
+                        // sh "docker build -t ${appName}:${commitHash} ."
+                        // sh "docker push ${appName}:${commitHash}"
                     }
                 }
             }
