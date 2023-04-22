@@ -11,15 +11,13 @@ To-do list:
 - [ ] Write the Service, Ingress for K8s resources 
 - [ ] Optimizing the solution 
 
-## Setup DevOps Environment 
-![](./images/key-value-api.drawio%20(1).png)
-
 ## 1. Development requirement features of the application 
 
 First of all, We have to analyze the task for a clear implementation.
 
 **Task**: The **in-memory** **key-value** store **API** will allow client to store and retrieve key-value pairs. The API support 2 operations:
 - /set: Post call which sets the key/value pair
+  
 - /get/<key>: Retrieve the value of the key  
 
 ```Note: Because this is in-memory store, so all data are not store permently.``` 
@@ -27,7 +25,9 @@ First of all, We have to analyze the task for a clear implementation.
 So, the behavior API Endpoints will have:
 1. Set a key-value pair
 - URL: `/set`
+
 - Method: `POST`
+  
 - Request Body: 
     ```json 
     {
@@ -43,12 +43,18 @@ So, the behavior API Endpoints will have:
         "message": "key-value pair is set successfully"
     }
     ```
-2. Get the value of the key
+1. Get the value of the key
+   
 - URL : `/get/<key>`
+  
 - Method: `GET`
-- URL Parameters: `key` - string 
+  
+- URL Parameters: `key` - string
+  
 - Success Response: 
+  
   - Code: `200 OK`
+  
   - Content: 
     ```json
     {
@@ -57,7 +63,9 @@ So, the behavior API Endpoints will have:
     }
     ```
 - Error Response:
+
   - Code: `404 Not Found`
+
   - Content:
     ```json
     {
@@ -67,8 +75,6 @@ So, the behavior API Endpoints will have:
     ```
 Implementation the API service with Python, Flask framework.
 
-Reason choosing Flask:
-- Simple framework, easy to learn and implementation. 
 
 The application code is here: [app](./app/app.py)
 
@@ -90,3 +96,19 @@ $ ./verify-api.sh
 ![](./images/Screenshot%202023-04-21%20at%2015.39.20.png)
 
 ## 3. DevOps Evaluation (Kubernetes)
+
+### 3.1. Analysis and design CI/CD infrastructure
+
+![](./image/../images/key-value-api.drawio.png)
+
+We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We will used `tag`. the content of tag will be the hash of the commit in Github repository.  
+For example: the image `image1:98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171` is the Docker image version corresponding the commit with hash :`98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171`  
+
+## 3.2. Provision jenkins server in aws with terraform 
+
+Reason to choose `terraform`: Convinient for managing infrastructure.   
+
+The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_server/)  
+
+lamnguyen142    
+1
