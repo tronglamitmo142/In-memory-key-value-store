@@ -37,6 +37,8 @@ pipeline {
                         def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
                         echo "Commit hash: ${commitHash}"
                         sh "whoami"
+                        sh "sudo usermod -aG docker $USER"
+                        sh "newgrp docker"
                         sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
                         sh "docker build -t ${appName}:${commitHash} ."
                         sh "docker push ${appName}:${commitHash}"
