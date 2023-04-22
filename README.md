@@ -101,7 +101,8 @@ $ ./verify-api.sh
 
 ![](./image/../images/key-value-api.drawio.png)
 
-We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We will used `tag`. the content of tag will be the hash of the commit in Github repository.  
+We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We will used `tag`. the content of tag will be the hash of the commit in Github repository. 
+
 For example: the image `image1:98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171` is the Docker image version corresponding the commit with hash :`98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171`  
 
 ## 3.2. Provision jenkins server in aws with terraform 
@@ -112,3 +113,4 @@ The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_se
 
 lamnguyen142    
 1
+
