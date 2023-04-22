@@ -31,17 +31,12 @@ pipeline {
         stage('Deploy Docker image into Docker Hub'){
             steps {
                 script {
-                    def dockerfileChanged = sh(returnStatus: true, script: 'git diff HEAD^ HEAD --Dockerfile') != 0
-                    if (dockerfileChanged) {
-                        echo "Create new Dockerfile images"
-                        def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-                        echo "Commit hash: ${commitHash}"
-                        sh "whoami"
-                        sh "sudo docker ps"
-                        // sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
-                        // sh "docker build -t ${appName}:${commitHash} ."
-                        // sh "docker push ${appName}:${commitHash}"
-                    }
+                    echo "Create new Dockerfile images"
+                    def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    echo "Commit hash: ${commitHash}"
+                    sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
+                    sh "docker build -t ${appName}:${commitHash} ."
+                    sh "docker push ${appName}:${commitHash}"
                 }
             }
         }
