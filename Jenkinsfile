@@ -36,7 +36,8 @@ pipeline {
                     echo "Commit hash: ${commitHash}"
                     sh "sudo docker login -u ${dockerHubUser} -p ${dockerPass}"
                     sh "sudo docker build -t ${appName}:${commitHash} ."
-                    sh "sudo docker push ${appName}:${commitHash}"
+                    sh "sudo docker tag ${appName}:${commitHash} ${dockerHubUser}/${appName}:${commitHash}"
+                    sh "sudo docker push ${dockerHubUser}/${appName}:${commitHash}"
                 }
             }
         }
