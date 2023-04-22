@@ -34,9 +34,9 @@ pipeline {
                     echo "Create new Dockerfile images"
                     def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
                     echo "Commit hash: ${commitHash}"
-                    sh "docker login -u ${dockerHubUser} -p ${dockerPass}"
-                    sh "docker build -t ${appName}:${commitHash} ."
-                    sh "docker push ${appName}:${commitHash}"
+                    sh "sudo docker login -u ${dockerHubUser} -p ${dockerPass}"
+                    sh "sudo docker build -t ${appName}:${commitHash} ."
+                    sh "sudo docker push ${appName}:${commitHash}"
                 }
             }
         }
