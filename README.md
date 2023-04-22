@@ -111,6 +111,5 @@ Reason to choose `terraform`: Convinient for managing infrastructure.
 
 The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_server/)  
 
-lamnguyen142    
-1
+We also created a agent server for executing the stages in pipeline. In this server, we install docker using: [install-docker script](./utils/install-docker.sh)
 
