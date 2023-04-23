@@ -6,7 +6,7 @@ To-do list:
   - [x] /get/<key> -> Return value of the key 
   - [x] /set -> Post call which sets the key/value pair 
 - [x] Create Dockerfile for this application 
-- [ ] Write CI/CD pipeline to deploy the Docker image to Docker repository (dockerhub)
+- [x] Write CI/CD pipeline to deploy the Docker image to Docker repository (dockerhub)
 - [ ] Deploy this image into a Kubernetes cluster, using Jenkins 
 - [ ] Write the Service, Ingress for K8s resources 
 - [ ] Optimizing the solution 
@@ -112,4 +112,7 @@ Reason to choose `terraform`: Convinient for managing infrastructure.
 The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_server/)  
 
 We also created a agent server for executing the stages in pipeline. In this server, we install docker using: [install-docker script](./utils/install-docker.sh)
+
+Setup global credentials for accessing to github repository and dockerhub 
+![](./images/Screenshot%202023-04-23%20at%2007.40.48.png)
 

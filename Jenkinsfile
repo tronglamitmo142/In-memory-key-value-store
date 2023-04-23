@@ -6,7 +6,7 @@ def dockerHubUser = "lamnt67"
 pipeline {
     agent {
         node {
-            label "34.216.62.137" 
+            label "52.40.148.134" 
         }
     }
     environment {
@@ -38,6 +38,7 @@ pipeline {
                     sh "sudo docker build -t ${appName}:${commitHash} ."
                     sh "sudo docker tag ${appName}:${commitHash} ${dockerHubUser}/${appName}:${commitHash}"
                     sh "sudo docker push ${dockerHubUser}/${appName}:${commitHash}"
+                    sh "sudo docker rmi -f ${appName}:${commitHash}"
                 }
             }
         }
