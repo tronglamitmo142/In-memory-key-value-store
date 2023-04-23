@@ -17,3 +17,18 @@ spec:
         image: lamnt67/in-memory-key-value-service:6ac38c8
         ports:
         - containerPort: 8088
+
+--- 
+
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: key-value-service
+spec:
+  selector:
+    app: key-value-app
+  ports:
+  - protocol: "TCP"
+    port: 8088
+    targetPort: 8088 
+  type: NodePort 

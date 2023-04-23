@@ -45,7 +45,6 @@ pipeline {
         stage("Deploy into Kubernetes cluster"){
             steps {
                 script {
-                    sh "kubectl get nodes"
                     sh "kubectl apply -f ./kubernetes/deployment.yaml"
                 }
             }
