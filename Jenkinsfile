@@ -13,8 +13,7 @@ pipeline {
         def dockerPass = credentials("docker_password")
         def githubCredentials = credentials("github_credentials")
         def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-        def containerImage = ${dockerHubUser}/${appName}:${commitHash}
-
+        def containerImage = "${dockerHubUser}/${appName}:${commitHash}"
     }
 
     stages {
