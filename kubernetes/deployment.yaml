@@ -14,14 +14,14 @@ spec:
     spec:
       containers:
       - name: key-value-app
-        image: lamnt67/in-memory-key-value-service:6ac38c8
+        image: ${CONTAINER_IMAGE}
         ports:
         - containerPort: 8088
 
---- 
+---
 
-apiVersion: v1 
-kind: Service 
+apiVersion: v1
+kind: Service
 metadata:
   name: key-value-service
 spec:
@@ -29,6 +29,6 @@ spec:
     app: key-value-app
   ports:
   - protocol: "TCP"
-    port: 8088
-    targetPort: 8088 
-  type: NodePort 
+    port: 80
+    targetPort: 8088
+  type: ClusterIP
