@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: key-value-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: key-value-app
+  template:
+    metadata:
+      labels:
+        app: key-value-app
+    spec:
+      containers:
+      - name: key-value-app
+        image: lamnt67/lamnt67/in-memory-key-value-service:6ac38c8
+        ports:
+        - containerPort: 8088
