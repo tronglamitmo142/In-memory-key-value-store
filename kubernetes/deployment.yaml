@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: key-value-app
-        image: lamnt67/lamnt67/in-memory-key-value-service:6ac38c8
+        image: lamnt67/in-memory-key-value-service:6ac38c8
         ports:
         - containerPort: 8088
