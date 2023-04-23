@@ -12,6 +12,9 @@ pipeline {
     environment {
         def dockerPass = credentials("docker_password")
         def githubCredentials = credentials("github_credentials")
+        def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+        def containerImage = ${dockerHubUser}/${appName}:${commitHash}
+
     }
 
     stages {
@@ -32,13 +35,11 @@ pipeline {
             steps {
                 script {
                     echo "Create new Dockerfile images"
-                    def commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-                    echo "Commit hash: ${commitHash}"
                     sh "sudo docker login -u ${dockerHubUser} -p ${dockerPass}"
-                    sh "sudo docker build -t ${appName}:${commitHash} ."
-                    sh "sudo docker tag ${appName}:${commitHash} ${dockerHubUser}/${appName}:${commitHash}"
-                    sh "sudo docker push ${dockerHubUser}/${appName}:${commitHash}"
-                    sh "sudo docker rmi -f ${appName}:${commitHash}"
+                    sh "sudo docker build -t ${containerImage} ."
+                    // sh "sudo docker tag ${containerImage} ${containerImage}"
+                    sh "sudo docker push ${containerImage}"
+                    sh "sudo docker rmi -f ${containerImage}"
                 }
             }
         }
@@ -46,6 +47,8 @@ pipeline {
             steps {
                 script {
                     sh "kubectl apply -f ./kubernetes/deployment.yaml"
+                    sh "kubectl set image deployment/key-value-deployment key-value-app=${containerImage}"
+                    sh "kubectl apply -f ./kubernetes/ingress.yaml"
                 }
             }
         }

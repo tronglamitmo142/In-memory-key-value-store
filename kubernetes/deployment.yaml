@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: key-value-app
-        image: ${CONTAINER_IMAGE}
+        image: lamnt67/in-memory-key-value-service:fc99d85
         ports:
         - containerPort: 8088
 

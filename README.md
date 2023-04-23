@@ -7,8 +7,8 @@ To-do list:
   - [x] /set -> Post call which sets the key/value pair 
 - [x] Create Dockerfile for this application 
 - [x] Write CI/CD pipeline to deploy the Docker image to Docker repository (dockerhub)
-- [ ] Deploy this image into a Kubernetes cluster, using Jenkins 
-- [ ] Write the Service, Ingress for K8s resources 
+- [x] Deploy this image into a Kubernetes cluster, using Jenkins 
+- [x] Write the Service, Ingress for K8s resources 
 - [ ] Optimizing the solution 
 
 ## 1. Development requirement features of the application 
@@ -101,11 +101,11 @@ $ ./verify-api.sh
 
 ![](./image/../images/key-value-api.drawio.png)
 
-We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We will used `tag`. the content of tag will be the hash of the commit in Github repository. 
+We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We used `tag`, the content of tag will be the hash of the commit in Github repository. 
 
 For example: the image `image1:98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171` is the Docker image version corresponding the commit with hash :`98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171`  
 
-## 3.2. Provision jenkins server in aws with terraform 
+## 3.2. Provision jenkins server in AWS with terraform 
 
 Reason to choose `terraform`: Convinient for managing infrastructure.   
 
@@ -116,17 +116,40 @@ We also created a agent server for executing the stages in pipeline. In this ser
 Setup global credentials for accessing to github repository and dockerhub 
 ![](./images/Screenshot%202023-04-23%20at%2007.40.48.png)
 
+Setup webhook for automation integrating jenkins
+![](./images/Screenshot%202023-04-23%20at%2015.16.23.png)
+
 Creating AWS EKS Cluster, using [eksctl](https://github.com/weaveworks/eksctl)
 
-Create cluster with 2 node, named: `key-value`
+Create cluster with 3 node, named: `key-value`
 ```bash 
-eksctl create cluster --name key-value --nodegroup-name linux-nodes --node-type t2.micro --nodes 2
+eksctl create cluster --name key-value --nodegroup-name linux-nodes --node-type t2.large --nodes 3
 ```
-![](./images/Screenshot%202023-04-23%20at%2010.03.48.png)
+Create ingress-controller
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+```
 
+## 3.3. Write the Service, Ingress for the K8s resource.
+Create [deployment and service](./kubernetes/deployment.yaml) and [ingress object](./kubernetes/ingress.yaml)  
 
-
-#Note issue: 
-- Isssue about changing ip jenkins 
-- issue about kubectl 
-  
+### Note issue: 
+- Isssue about changing ip jenkins: 
+  -> for Cost Optimizing, I stopeed ec2 machine in the night. And in the morning, my public IP of Jenkins was changed. But connection file of Jenkins server is still used the old ip and the agent can't communicate with Jenkins server.  
+   => Need to associate DNS or elastic IP for Jenkins server in future.   
+- Issue about kubectl  
+  -> Kubectl version higher 1.24 can't communicate with my cluster provided by eksctl  
+  => downgrade the kubectl in 1.23.7   
+- Issue can't scheduling pod   
+  -> In specfic instance in AWS only allow a fixed number of pod that can be scheduled. I used t2.micro for worker node and only can shedule 2 pod each nodes, it's not comfotable  
+   => I need to use another instance type. 
+- Issue 404 Not found in ingress controller endpoint
+  -> I already setup configuration of ingress controller but when i accessed into endpoint, I found 404 error: Nginx not found.   
+  I checked log of the `ingress-nginx-controller` pod and it showed: `I0423 11:44:27.168510       7 store.go:429] "Ignoring ingress because of error while validating ingress class" ingress="default/key-value-ingress-test" error="ingress does not contain a valid IngressClass"`.  
+   After couples of minutes to research, I found the problem is missing ingress class in ingress object.   
+  So I need to add this line to ingress.yaml
+  ```yaml 
+      annotations:
+    kubernetes.io/ingress.class: "nginx"
+  ```
+  And it worked fine. 
