@@ -116,3 +116,17 @@ We also created a agent server for executing the stages in pipeline. In this ser
 Setup global credentials for accessing to github repository and dockerhub 
 ![](./images/Screenshot%202023-04-23%20at%2007.40.48.png)
 
+Creating AWS EKS Cluster, using [eksctl](https://github.com/weaveworks/eksctl)
+
+Create cluster with 2 node, named: `key-value`
+```bash 
+eksctl create cluster --name key-value --nodegroup-name linux-nodes --node-type t2.micro --nodes 2
+```
+![](./images/Screenshot%202023-04-23%20at%2010.03.48.png)
+
+
+
+#Note issue: 
+- Isssue about changing ip jenkins 
+- issue about kubectl 
+  

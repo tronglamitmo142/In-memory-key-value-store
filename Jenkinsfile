@@ -42,5 +42,12 @@ pipeline {
                 }
             }
         }
+        stage("Deploy into Kubernetes cluster"){
+            steps {
+                script {
+                    sh "kubectl get nodes"
+                }
+            }
+        }
     }
 }
