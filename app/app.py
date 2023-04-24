@@ -70,7 +70,7 @@ def set_key():
 
     if key is not None and value is not None:
         store[key] = value
-        table.put_item(
+        response = table.put_item(
             Item = {
                 'key': key,
                 'value': value
