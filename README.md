@@ -82,7 +82,13 @@ So, the behavior API Endpoints will have:
         "message": "Key not found"
     }
     ```
-Implementation the API service with Python, Flask framework.
+We addressed some problem about system design of the application: 
+- We noticed that the application in running in several pod, so how to make sure data is saved in each pod is same. For example, we have a `{key1, value1}` is saved in pod 1. When request comming, Load Balancer will redirect the request to pod 2, which doesn't have `{key1, value1}` in in-memory store. It's not ideal for avaibility and consistency aspect.  
+- Another problem is, because the pod is emphemeral object (will be destroyed and recreated anytime), and when the pod is destroyed, every in-memory data is gone.   
+=> We need to implement the persistent database solution for helping both GET and SET operation. In this assignment, I used dynamodb as the persistent database.   
+The design of the application is showed below:
+
+Implementation the API service with Python, Flask framework, DynamoDB as a Database.
 
 
 The application code in here: [app](./app/app.py)
