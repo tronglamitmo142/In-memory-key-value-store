@@ -11,6 +11,14 @@
         form {
             margin-bottom: 2em;
         }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1em;
+        }
+        .input-group label {
+            margin-right: 1em;
+        }
     </style>
 </head>
 <body>
@@ -18,20 +26,23 @@
 
     <h2>Set Key-Value Pair</h2>
     <form id="set-form">
-        <label for="set-key">Key:</label>
-        <input type="text" id="set-key" name="set-key">
-        <br>
-        <label for="set-value">Value:</label>
-        <input type="text" id="set-value" name="set-value">
-        <br>
+        <div class="input-group">
+            <label for="set-key">Key:</label>
+            <input type="text" id="set-key" name="set-key">
+        </div>
+        <div class="input-group">
+            <label for="set-value">Value:</label>
+            <input type="text" id="set-value" name="set-value">
+        </div>
         <button type="submit">Set</button>
     </form>
 
     <h2>Get Value by Key</h2>
     <form id="get-form">
-        <label for="get-key">Key:</label>
-        <input type="text" id="get-key" name="get-key">
-        <br>
+        <div class="input-group">
+            <label for="get-key">Key:</label>
+            <input type="text" id="get-key" name="get-key">
+        </div>
         <button type="submit">Get</button>
     </form>
 
