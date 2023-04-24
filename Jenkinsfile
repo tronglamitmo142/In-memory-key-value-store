@@ -30,13 +30,33 @@ pipeline {
                 ])
             }
         }
-        stage('Deploy Docker image into Docker Hub'){
+        stage('SAST Scan') {
+            steps {
+                script {
+                    echo "Scan source code with Semgrep"
+                    sh "semgrep scan --config=auto -o SAST_report.txt"
+                }
+            }
+        }
+        stage('Create Dockerfile'){
             steps {
                 script {
                     echo "Create new Dockerfile images"
-                    sh "sudo docker login -u ${dockerHubUser} -p ${dockerPass}"
                     sh "sudo docker build -t ${containerImage} ."
-                    // sh "sudo docker tag ${containerImage} ${containerImage}"
+                }
+            }
+        }
+        stage('Image scanning'){
+            steps {
+                script {
+                    sh "trivy image --scanners vuln --format json --output image_scanning ${containerImage}"
+                }
+            }
+        }
+        stage('Push Dockerfile into Dockerhub'){
+            steps {
+                script {
+                    sh "sudo docker login -u ${dockerHubUser} -p ${dockerPass}"
                     sh "sudo docker push ${containerImage}"
                     sh "sudo docker rmi -f ${containerImage}"
                 }

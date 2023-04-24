@@ -81,7 +81,7 @@ So, the behavior API Endpoints will have:
 Implementation the API service with Python, Flask framework.
 
 
-The application code is here: [app](./app/app.py)
+The application code in here: [app](./app/app.py)
 
 Result  
 Simple App UI  
@@ -165,3 +165,9 @@ Create [deployment and service](./kubernetes/deployment.yaml) and [ingress objec
     kubernetes.io/ingress.class: "nginx"
   ```
   And it worked fine. 
+
+## 4. Futher Implementation 
+In this step, We tried to implementation our CI/CD process much more security and easy monitor by administration. The steps includes:
+- Adding scanning step into CI/CD pipeline 
+- Creating notification channel in telegram to receive any event 
+
