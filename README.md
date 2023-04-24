@@ -1,5 +1,5 @@
 # In-memory-key-value-store
-In-memory key-value store application, included DevOps implementation 
+In-memory key-value store application, included DevOps implementation  
 
 **The application available in here: [Key-Value-App](http://a8bf9139152c74934bd64581c346bedc-2125809990.us-west-2.elb.amazonaws.com/).**  
 
@@ -7,6 +7,9 @@ In-memory key-value store application, included DevOps implementation
 -  Build and push docker image, that associated with the commit 
 -  Deloy the images into a kubernetes cluster in AWS environment.  
 
+CI/CD workflow is showed below: 
+
+![](.images/../images/key-value-api.drawio%20(2).png)
 **To-do list:** 
 - [x] Create an in-memory key-value store HTTP API Service which implements:
   - [x] /get/<key> -> Return value of the key 
@@ -15,6 +18,7 @@ In-memory key-value store application, included DevOps implementation
 - [x] Write CI/CD pipeline to deploy the Docker image to Docker repository (dockerhub)
 - [x] Deploy this image into a Kubernetes cluster, using Jenkins 
 - [x] Write the Service, Ingress for K8s resources 
+- [x] Add new features
 
 ## 1. Development requirement features of the application 
 
@@ -82,13 +86,14 @@ Implementation the API service with Python, Flask framework.
 
 
 The application code in here: [app](./app/app.py)
-
-Result  
+  
 Simple App UI  
 ![](./images/Screenshot%202023-04-23%20at%2021.22.52.png)  
-POST Method   
+POST Method  
+
 ![](.images/../images/Screenshot%202023-04-23%20at%2021.24.13.png)  
 Get Method  
+
 ![](./images/Screenshot%202023-04-23%20at%2021.24.32.png)
 ## 2. Writing Dockerfile
 The Dockerfile is here: [Dockerfile](./Dockerfile)
@@ -126,9 +131,11 @@ The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_se
 We also created a agent server for executing the stages in pipeline. In this server, we install docker using: [install-docker script](./utils/install-docker.sh)
 
 Setup global credentials for accessing to github repository and dockerhub 
+
 ![](./images/Screenshot%202023-04-23%20at%2007.40.48.png)
 
 Setup webhook for automation integrating jenkins
+
 ![](./images/Screenshot%202023-04-23%20at%2015.16.23.png)
 
 Creating AWS EKS Cluster, using [eksctl](https://github.com/weaveworks/eksctl)
@@ -172,7 +179,7 @@ In this step, We tried to implementation our CI/CD process much more security an
 In this step, We used [Semgrep](https://semgrep.dev/) to scan source code after checkout phase. The report is located in working directory with named `SAST_report.txt`    
 2. Creating notification channel in telegram to receive any build event   
 We create telegram bot and channel to receive any build event from jenkins job. In [Jenkinsfile](./Jenkinsfile), we specify the event and message in POST section. 
-The result is
-![](./images/Screenshot%202023-04-24%20at%2009.43.49.png)
+The result is showed below
+![](./images/Screenshot%202023-04-24%20at%2009.43.49.png)   
 Channel: https://t.me/+P5GnpiyS6Rc1NzVl
 
