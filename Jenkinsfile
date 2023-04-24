@@ -34,7 +34,6 @@ pipeline {
             steps {
                 script {
                     echo "Scan source code with Semgrep"
-                    sh "python3 -m pip install semgrep"
                     sh "/home/ubuntu/.local/bin/semgrep scan --config=auto -o SAST_report.txt"
                 }
             }
@@ -50,6 +49,7 @@ pipeline {
         stage('Image scanning'){
             steps {
                 script {
+                    sh "Scan Dockerfile with trivy"
                     sh "trivy image --scanners vuln --format json --output image_scanning ${containerImage}"
                 }
             }
@@ -71,6 +71,16 @@ pipeline {
                     sh "kubectl apply -f ./kubernetes/ingress.yaml"
                 }
             }
+        }
+    }
+    post {
+        success {
+            def TOKEN = credentials("telegram_bot_token")
+            def CHAT_ID = credentials("telegram_bot_chat_id")
+            sh  ("""
+                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID}
+                -d parse_mode=markdown -d text='*${env.JOB_NAME}* : POC *Branch*: ${env.GIT_BRANCH} *Build* : OK *Published* = YES'
+                """)
         }
     }
 }
