@@ -168,6 +168,11 @@ Create [deployment and service](./kubernetes/deployment.yaml) and [ingress objec
 
 ## 4. Futher Implementation 
 In this step, We tried to implementation our CI/CD process much more security and easy monitor by administration. The steps includes:
-- Adding scanning step into CI/CD pipeline 
-- Creating notification channel in telegram to receive any event 
+1. Adding scanning step into CI/CD pipeline  
+In this step, We used [Semgrep](https://semgrep.dev/) to scan source code after checkout phase. The report is located in working directory with named `SAST_report.txt`    
+2. Creating notification channel in telegram to receive any build event   
+We create telegram bot and channel to receive any build event from jenkins job. In [Jenkinsfile](./Jenkinsfile), we specify the event and message in POST section. 
+The result is
+![](./images/Screenshot%202023-04-24%20at%2009.43.49.png)
+Channel: https://t.me/+P5GnpiyS6Rc1NzVl
 

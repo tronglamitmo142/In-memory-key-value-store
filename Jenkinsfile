@@ -66,11 +66,25 @@ pipeline {
         }
     }
     post {
+        always{
+            withCredentials([string(credentialsId: 'telegram_bot_token', variable: 'TOKEN'), string(credentialsId: 'telegram_bot_chat_id', variable: 'CHAT_ID')]) {
+            sh ("""
+                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode=markdown -d text='Job ${env.BUILD_NUMBER} associated with commit ${commitHash} is built'
+                """
+                )
+            }
+        }
         success {
             withCredentials([string(credentialsId: 'telegram_bot_token', variable: 'TOKEN'), string(credentialsId: 'telegram_bot_chat_id', variable: 'CHAT_ID')]) {
             sh  ("""
-                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID}
-                -d parse_mode=markdown -d text='*${env.JOB_NAME}* : POC *Branch*: ${env.GIT_BRANCH} *Build* : OK *Published* = YES'
+                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode=markdown -d text='The Job ${env.BUILD_NUMBER}} is success!'
+                """)
+            }
+        }
+        failure {
+            withCredentials([string(credentialsId: 'telegram_bot_token', variable: 'TOKEN'), string(credentialsId: 'telegram_bot_chat_id', variable: 'CHAT_ID')]) {
+            sh  ("""
+                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode=markdown -d text='The Job ${env.BUILD_NUMBER} is failed!'
                 """)
             }
         }
