@@ -5,14 +5,19 @@ Because we use flask as a backend service, we need to import:
     - jsontify: 
     - render_template: to render template in /templates
 """
+import boto3
+from boto3.dynamodb.conditions import Key
 from flask import Flask, request, jsonify, render_template
 
 # Initilize the flask app object
 app = Flask(__name__)
 
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('key_value_store')
+
 # Because the service is in-memory key-value store, so we use dictionary class in Python to store the key-value pair
 store = {}
-
+key_order = []
 
 @app.route("/")
 def home():
@@ -35,10 +40,19 @@ def get_key(key):
             - if it has, it returns the associated key-value pair
             - If not, it returns the error status
     """
-    if key in store:
-        return jsonify({"key": key, "value": store[key]})
-    else:
-        return jsonify({"status": "error", "message": "Key not found"}), 404
+    value = store.get(key)
+    if key is None:
+        response = table.get_item(
+            Key={
+                'key': key
+            }
+        )
+        if 'Item' in response:
+            value = response['Item']['value']
+        else:
+            return jsonify({"status": "error", "message": "Key not found"}), 404
+        
+    return jsonify({'key': key, 'value': value})
 
 
 @app.route("/set", methods=["POST"])
@@ -56,6 +70,12 @@ def set_key():
 
     if key is not None and value is not None:
         store[key] = value
+        table.put_item(
+            Item = {
+                'key': key,
+                'value': value
+            }
+        )
         return jsonify(
             {"status": "success", "message": "Key-value pair is set successfully"}
         )
