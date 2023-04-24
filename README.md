@@ -116,19 +116,17 @@ $ ./verify-api.sh
 
 ### 3.1. Analysis and design CI/CD infrastructure
 
-![](./image/../images/key-value-api.drawio.png)
-
 We will build kubernetes cluster from docker images, we have to find solution for define specific version of images, and also for optimizing the build time. We used `tag`, the content of tag will be the hash of the commit in Github repository. 
 
 For example: the image `image1:98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171` is the Docker image version corresponding the commit with hash :`98f6b2d787dd72d4c0f4e3844ee0f94eafd0d171`  
 
-## 3.2. Provision jenkins server in AWS with terraform 
+## 3.2. Provision Jenkins server in AWS with terraform 
 
 Reason to choose `terraform`: Convinient for managing infrastructure.   
 
 The IaC resource is showed here: [IaC for Jenkins Server](./terraform/jenkins_server/)  
 
-We also created a agent server for executing the stages in pipeline. In this server, we install docker using: [install-docker script](./utils/install-docker.sh)
+We also created a agent server for executing the stages in pipeline. In this server, We installed docker using: [install-docker script](./utils/install-docker.sh)
 
 Setup global credentials for accessing to github repository and dockerhub 
 
@@ -174,10 +172,10 @@ Create [deployment and service](./kubernetes/deployment.yaml) and [ingress objec
   And it worked fine. 
 
 ## 4. Futher Implementation 
-In this step, We tried to implementation our CI/CD process much more security and easy monitor by administration. The steps includes:
+In this step, We tried to implementation our CI/CD process much more security and easy monitored by administration. The steps includes:
 1. Adding scanning step into CI/CD pipeline  
 In this step, We used [Semgrep](https://semgrep.dev/) to scan source code after checkout phase. The report is located in working directory with named `SAST_report.txt`    
-2. Creating notification channel in telegram to receive any build event   
+2. Creating notification channel in telegram for receiving any build event   
 We create telegram bot and channel to receive any build event from jenkins job. In [Jenkinsfile](./Jenkinsfile), we specify the event and message in POST section. 
 The result is showed below
 ![](./images/Screenshot%202023-04-24%20at%2009.43.49.png)   
