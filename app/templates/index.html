@@ -74,11 +74,12 @@
             e.preventDefault();
 
             const key = document.getElementById('get-key').value;
-
+            setTimeout(async () => {
             const response = await fetch(`${API_BASE_URL}/get/${key}`);
             const data = await response.json();
             document.getElementById('result').textContent = JSON.stringify(data, null, 2);
-        });
+        }, 500); //0.5s delay
+    });
     </script>
 </body>
 </html>
