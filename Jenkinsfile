@@ -77,7 +77,7 @@ pipeline {
         success {
             withCredentials([string(credentialsId: 'telegram_bot_token', variable: 'TOKEN'), string(credentialsId: 'telegram_bot_chat_id', variable: 'CHAT_ID')]) {
             sh  ("""
-                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode=markdown -d text='The Job ${env.BUILD_NUMBER}} is success!'
+                curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode=markdown -d text='The Job ${env.BUILD_NUMBER} is success!'
                 """)
             }
         }
