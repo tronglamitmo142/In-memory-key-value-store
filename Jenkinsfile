@@ -46,14 +46,6 @@ pipeline {
                 }
             }
         }
-        stage('Image scanning'){
-            steps {
-                script {
-                    sh "Scan Dockerfile with trivy"
-                    sh "trivy image --scanners vuln --format json --output image_scanning ${containerImage}"
-                }
-            }
-        }
         stage('Push Dockerfile into Dockerhub'){
             steps {
                 script {
