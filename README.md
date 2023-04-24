@@ -1,7 +1,13 @@
 # In-memory-key-value-store
 In-memory key-value store application, included DevOps implementation 
 
-To-do list: 
+**The application available in here: [Key-Value-App](http://a8bf9139152c74934bd64581c346bedc-2125809990.us-west-2.elb.amazonaws.com/).**  
+
+**Workflow of CI/CD:** Everytime when developer commit into github repository, the jenkins server auto trigger the pipeline job, using Jenkinsfile in repository. The job is executed in Jenkins Agent, the step includes:
+-  Build and push docker image, that associated with the commit 
+-  Deloy the images into a kubernetes cluster in AWS environment.  
+
+**To-do list:** 
 - [x] Create an in-memory key-value store HTTP API Service which implements:
   - [x] /get/<key> -> Return value of the key 
   - [x] /set -> Post call which sets the key/value pair 
@@ -9,7 +15,6 @@ To-do list:
 - [x] Write CI/CD pipeline to deploy the Docker image to Docker repository (dockerhub)
 - [x] Deploy this image into a Kubernetes cluster, using Jenkins 
 - [x] Write the Service, Ingress for K8s resources 
-- [ ] Optimizing the solution 
 
 ## 1. Development requirement features of the application 
 
@@ -78,6 +83,13 @@ Implementation the API service with Python, Flask framework.
 
 The application code is here: [app](./app/app.py)
 
+Result  
+Simple App UI  
+![](./images/Screenshot%202023-04-23%20at%2021.22.52.png)  
+POST Method   
+![](.images/../images/Screenshot%202023-04-23%20at%2021.24.13.png)  
+Get Method  
+![](./images/Screenshot%202023-04-23%20at%2021.24.32.png)
 ## 2. Writing Dockerfile
 The Dockerfile is here: [Dockerfile](./Dockerfile)
 
@@ -135,7 +147,7 @@ Create [deployment and service](./kubernetes/deployment.yaml) and [ingress objec
 
 ### Note issue: 
 - Isssue about changing ip jenkins: 
-  -> for Cost Optimizing, I stopeed ec2 machine in the night. And in the morning, my public IP of Jenkins was changed. But connection file of Jenkins server is still used the old ip and the agent can't communicate with Jenkins server.  
+  -> for Cost Optimizing, I stoped ec2 machine in the night. And in the morning, my public IP of Jenkins was changed. But connection file of Jenkins server is still used the old ip and the agent can't communicate with Jenkins server.  
    => Need to associate DNS or elastic IP for Jenkins server in future.   
 - Issue about kubectl  
   -> Kubectl version higher 1.24 can't communicate with my cluster provided by eksctl  
