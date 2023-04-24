@@ -35,7 +35,7 @@ pipeline {
                 script {
                     echo "Scan source code with Semgrep"
                     sh "python3 -m pip install semgrep"
-                    sh "semgrep scan --config=auto -o SAST_report.txt"
+                    sh "/home/ubuntu/.local/bin/semgrep scan --config=auto -o SAST_report.txt"
                 }
             }
         }
