@@ -13,7 +13,7 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('key_value_store')
+table = dynamodb.Table('key-value-database')
 
 # Because the service is in-memory key-value store, so we use dictionary class in Python to store the key-value pair
 store = {}
@@ -70,7 +70,7 @@ def set_key():
 
     if key is not None and value is not None:
         store[key] = value
-        response = table.put_item(
+        table.put_item(
             Item = {
                 'key': key,
                 'value': value
