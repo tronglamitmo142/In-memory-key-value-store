@@ -12,8 +12,8 @@ from flask import Flask, request, jsonify, render_template
 # Initilize the flask app object
 app = Flask(__name__)
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('key-value-database')
+table = boto3.resource('dynamodb', region_name='us-west-2').Table('key-value-database')
+
 
 # Because the service is in-memory key-value store, so we use dictionary class in Python to store the key-value pair
 store = {}
@@ -41,12 +41,13 @@ def get_key(key):
             - If not, it returns the error status
     """
     value = store.get(key)
-    if key is None:
+    if key not in store:
         response = table.get_item(
             Key={
                 'key': key
             }
         )
+        print(response)
         if 'Item' in response:
             value = response['Item']['value']
         else:
@@ -70,17 +71,14 @@ def set_key():
 
     if key is not None and value is not None:
         store[key] = value
-        table.put_item(
-            Item = {
-                'key': key,
-                'value': value
-            }
-        )
+        item = {
+            "key": key,
+            "value": value
+        }
+        response = table.put_item(Item=item)
         return jsonify(
             {"status": "success", "message": "Key-value pair is set successfully"}
         )
-    else:
-        return jsonify({"status": "error", "message": "Invalid key pair"}), 400
 
 
 if __name__ == "__main__":
