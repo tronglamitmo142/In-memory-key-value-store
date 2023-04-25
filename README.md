@@ -82,16 +82,16 @@ So, the behavior API Endpoints will have:
         "message": "Key not found"
     }
     ```
-We addressed some problem about system design of the application: 
-- We noticed that the application in running in several pod, so how to make sure data is saved in each pod is same. For example, we have a `{key1, value1}` is saved in pod 1. When request comming, Load Balancer will redirect the request to pod 2, which doesn't have `{key1, value1}` in in-memory store. It's not ideal for avaibility and consistency aspect.  
-- Another problem is, because the pod is emphemeral object (will be destroyed and recreated anytime), and when the pod is destroyed, every in-memory data is gone.   
-=> We need to implement the persistent database solution for helping both GET and SET operation. In this assignment, I used dynamodb as the persistent database.   
-The design of the application is showed below:
+We addressed some problems about system design of the application: 
+- We noticed that the application in running in several pods, so how to make sure data is saved in each pod is same (consistency). For example, we have a `{key1, value1}` is saved in pod 1. When request comming, Load Balancer will redirect the request to pod 2, which doesn't have `{key1, value1}` in in-memory store. It's not good idea in avaibility and consistency aspect.  
+- Another problem is, because the pods is emphemeral objects (will be destroyed and recreated anytime), and when the pod is destroyed, every in-memory data is gone.   
+=> We need to implement the persistent database solution for helping both GET and SET operation. In this assignment, I used `dynamodb` as the persistent database.   
+
 
 Implementation the API service with Python, Flask framework, DynamoDB as a Database.
 
 
-The application code in here: [app](./app/app.py)
+The application code in here: [Key-Value Application](./app/app.py)
   
 Simple App UI  
 ![](./images/Screenshot%202023-04-23%20at%2021.22.52.png)  
@@ -156,18 +156,32 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ## 3.3. Write the Service, Ingress for the K8s resource.
 Create [deployment and service](./kubernetes/deployment.yaml) and [ingress object](./kubernetes/ingress.yaml)  
 
+The CI/CD pipeline: 
+![](.image/../images/Screenshot%202023-04-25%20at%2009.13.05.png)
 ### Note issue: 
-- Isssue about changing ip jenkins: 
-  -> for Cost Optimizing, I stoped ec2 machine in the night. And in the morning, my public IP of Jenkins was changed. But connection file of Jenkins server is still used the old ip and the agent can't communicate with Jenkins server.  
+- **Isssue about changing IP jenkins**:   
+  for Cost Optimizing, I stoped EC2 machine in the night. And in the morning, my public IP of Jenkins was changed. But connection file of Jenkins server is still used the old ip and the agent can't communicate with Jenkins server.  
    => Need to associate DNS or elastic IP for Jenkins server in future.   
-- Issue about kubectl  
-  -> Kubectl version higher 1.24 can't communicate with my cluster provided by eksctl  
+- **Issue about kubectl**    
+  Kubectl version higher 1.24 can't communicate with my cluster provided by eksctl  
   => downgrade the kubectl in 1.23.7   
-- Issue can't scheduling pod   
-  -> In specfic instance in AWS only allow a fixed number of pod that can be scheduled. I used t2.micro for worker node and only can shedule 2 pod each nodes, it's not comfotable  
-   => I need to use another instance type. 
-- Issue 404 Not found in ingress controller endpoint
-  -> I already setup configuration of ingress controller but when i accessed into endpoint, I found 404 error: Nginx not found.   
+- **Issue can't scheduling pod**     
+  In specfic instance in AWS only allow a fixed number of pod that can be scheduled. I used t2.micro for worker node and only can shedule 2 pod each nodes, it's not comfotable  
+   => We need to use another instance type. 
+- **Issue about pod authentication:**  
+  The application runs correctly in local but when deploy in kubernetes environment, It can take GET and POST operation.  
+  Check the log of application pods
+  ```bash
+  kubectl logs key-value-deployment-c444dd5c-jx62r
+  ```
+  ```bash 
+  botocore.exceptions.ClientError: An error occurred (AccessDeniedException) when calling the GetItem operation: User: arn:aws:sts::182028900998:assumed-role/eksctl-key-value-nodegroup-linux-NodeInstanceRole-ZCM7XG4L4F54/i-05db7ed5b1f3a6d6c is not authorized to perform: dynamodb:GetItem on resource: arn:aws:dynamodb:us-west-2:182028900998:table/key-value-database because no identity-based policy allows the dynamodb:GetItem action
+  ```
+  The root of problem is the IAM Role associated with Node pod doesn't have permission to perform GET, SET operation in DynamoDB
+  => We need to grant permission for this role 
+
+- **Issue 404 Not found in ingress controller endpoint**  
+  I already setup configuration of ingress controller but when i accessed into endpoint, I found 404 error: Nginx not found.   
   I checked log of the `ingress-nginx-controller` pod and it showed: `I0423 11:44:27.168510       7 store.go:429] "Ignoring ingress because of error while validating ingress class" ingress="default/key-value-ingress-test" error="ingress does not contain a valid IngressClass"`.  
    After couples of minutes to research, I found the problem is missing ingress class in ingress object.   
   So I need to add this line to ingress.yaml

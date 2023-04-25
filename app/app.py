@@ -4,6 +4,7 @@ Because we use flask as a backend service, we need to import:
     - request: to access the request data 
     - jsontify: 
     - render_template: to render template in /templates
+We also use boto3 for communicating with aws resource
 """
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -36,9 +37,11 @@ def get_key(key):
     """
     This function aims to handler the GET key request from end user
     The logic:
-        - When the GET key request is sent, it will if the key exits in store or not:
+        - When the GET key request is sent, it will check if the key exits in store or not:
             - if it has, it returns the associated key-value pair
-            - If not, it returns the error status
+            - If not, it continue to check key-pair in database:
+                - If has, return key-value and add key-value pair in dict for future usage 
+                - If not, return error 
     """
     value = store.get(key)
     if key not in store:
@@ -47,9 +50,9 @@ def get_key(key):
                 'key': key
             }
         )
-        print(response)
         if 'Item' in response:
             value = response['Item']['value']
+            store[key] = value
         else:
             return jsonify({"status": "error", "message": "Key not found"}), 404
         
@@ -63,7 +66,7 @@ def set_key():
     The logic:
         - When receive the POST request, it will check the validation of them:
             - If it's not valid, return error status
-            - If it's valid, update the new key-pair into store dictionary.
+            - If it's valid, update the new key-pair into store dictionary and database.
     """
     data = request.get_json()
     key = data.get("key")
@@ -76,9 +79,7 @@ def set_key():
             "value": value
         }
         response = table.put_item(Item=item)
-        return jsonify(
-            {"status": "success", "message": "Key-value pair is set successfully"}
-        )
+        return jsonify({"status": "success", "message": "Key-value pair is set successfully"})
 
 
 if __name__ == "__main__":
