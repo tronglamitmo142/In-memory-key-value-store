@@ -45,20 +45,10 @@ def get_key(key):
                 - If not, return error 
     """
     value = store.get(key)
-    if key not in store:
-        response = table.get_item(
-            Key={
-                'key': key
-            }
-        )
-        if 'Item' in response:
-            value = response['Item']['value']
-            store[key] = value
-        else:
-            return jsonify({"status": "error", "message": "Key not found"}), 404
-    # Update the value to in-memory store from database 
-    try:    
-        return jsonify({'key': key, 'value': value})
+        
+    try: 
+        if key in store:
+            return jsonify({'key': key, 'value': value})
     finally:
         response = table.get_item(
             Key={
@@ -68,6 +58,9 @@ def get_key(key):
         if 'Item' in response:
             value = response['Item']['value']
             store[key] = value
+            return jsonify({'key': key, 'value': value})
+        else:
+            return jsonify({"status": "error", "message": "Key not found"}), 404
 
 
 @app.route("/set", methods=["POST"])
@@ -80,10 +73,10 @@ def set_key():
             - If it's valid, update the new key-pair into store dictionary and database.
     """
     data = request.get_json()
-    key = data.get("key")
-    value = data.get("value")
+    key = data.get("key", "")
+    value = data.get("value", "")
 
-    if key is not None and value is not None:
+    if key != "" and value != "":
         store[key] = value
         item = {
             "key": key,
@@ -91,12 +84,21 @@ def set_key():
         }
         response = table.put_item(Item=item)
         return jsonify({"status": "success", "message": "Key-value pair is set successfully"})
+    else:
+        return jsonify({"status": "failed", "message": "Key and value must be not empty"}), 400
+
+
+def reset_in_memory_store(store):
+    while True:
+        store.clear()
+        time.sleep(300)
 
 
 if __name__ == "__main__":
 
     app.run(port=8088, debug=True)
-    while True: 
-        store.clear()
-        time.sleep(30)
+    
+    # Every 5 minutes, the store will be clear to make sure consistency 
+    reset_in_memory_store(store=store)
+         
 

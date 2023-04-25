@@ -88,9 +88,10 @@ We addressed some problems about system design of the application:
 => We need to implement the persistent database solution for helping both GET and SET operation. In this assignment, I used `dynamodb` as the persistent database.   
 - The third issues is, when user update the new value for the existing key, how to make sure that the value of the key is updated in every pod. 
 
-Eventually consisstency 
+Update 25/04: I think the best answer must be using Pub-Sub model, But I relize this too late, so I will try to implement next day. For now, I implemented by using in-memory and database. 
 
-Update 25/04: I think the best answer must be using Pub-Sub model, But I relize this too late, so I will try to implement next day. For now, I implemented by using
+
+![](./images/Screenshot%202023-04-25%20at%2010.39.36.png)
 
 Implementation the API service with Python, Flask framework, DynamoDB as a Database.
 
