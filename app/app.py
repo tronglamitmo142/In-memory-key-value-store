@@ -6,6 +6,7 @@ Because we use flask as a backend service, we need to import:
     - render_template: to render template in /templates
 We also use boto3 for communicating with aws resource
 """
+import time 
 import boto3
 from boto3.dynamodb.conditions import Key
 from flask import Flask, request, jsonify, render_template
@@ -55,8 +56,18 @@ def get_key(key):
             store[key] = value
         else:
             return jsonify({"status": "error", "message": "Key not found"}), 404
-        
-    return jsonify({'key': key, 'value': value})
+    # Update the value to in-memory store from database 
+    try:    
+        return jsonify({'key': key, 'value': value})
+    finally:
+        response = table.get_item(
+            Key={
+                'key': key
+            }
+        )
+        if 'Item' in response:
+            value = response['Item']['value']
+            store[key] = value
 
 
 @app.route("/set", methods=["POST"])
@@ -83,4 +94,9 @@ def set_key():
 
 
 if __name__ == "__main__":
+
     app.run(port=8088, debug=True)
+    while True: 
+        store.clear()
+        time.sleep(30)
+

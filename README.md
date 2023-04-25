@@ -86,7 +86,11 @@ We addressed some problems about system design of the application:
 - We noticed that the application in running in several pods, so how to make sure data is saved in each pod is same (consistency). For example, we have a `{key1, value1}` is saved in pod 1. When request comming, Load Balancer will redirect the request to pod 2, which doesn't have `{key1, value1}` in in-memory store. It's not good idea in avaibility and consistency aspect.  
 - Another problem is, because the pods is emphemeral objects (will be destroyed and recreated anytime), and when the pod is destroyed, every in-memory data is gone.   
 => We need to implement the persistent database solution for helping both GET and SET operation. In this assignment, I used `dynamodb` as the persistent database.   
+- The third issues is, when user update the new value for the existing key, how to make sure that the value of the key is updated in every pod. 
 
+Eventually consisstency 
+
+Update 25/04: I think the best answer must be using Pub-Sub model, But I relize this too late, so I will try to implement next day. For now, I implemented by using
 
 Implementation the API service with Python, Flask framework, DynamoDB as a Database.
 
