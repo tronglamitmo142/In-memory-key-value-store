@@ -41,8 +41,9 @@ def get_key(key):
         - When the GET key request is sent, it will check if the key exits in store or not:
             - if it has, it returns the associated key-value pair
             - If not, it continue to check key-pair in database:
-                - If has, return key-value and add key-value pair in dict for future usage 
+                - If has, return key-value and update key-value pair in dict for future usage 
                 - If not, return error 
+            - In both case, finally, the key-value pair is updated in database. 
     """
     value = store.get(key)
         
